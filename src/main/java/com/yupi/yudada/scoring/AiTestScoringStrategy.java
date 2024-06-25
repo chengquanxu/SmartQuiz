@@ -41,8 +41,8 @@ public class AiTestScoringStrategy implements ScoringStrategy {
     @Resource
     private AiManager aiManager;
 
-    @Resource
-    private RedissonClient redissonClient;
+    //@Resource
+    //private RedissonClient redissonClient;
 
     // 分布式锁的 key
     private static final String AI_ANSWER_LOCK = "AI_ANSWER_LOCK";
@@ -91,16 +91,16 @@ public class AiTestScoringStrategy implements ScoringStrategy {
             return userAnswer;
         }
 
-        // 定义锁
-        RLock lock = redissonClient.getLock(AI_ANSWER_LOCK + cacheKey);
-        try {
-            // 竞争锁
-            boolean res = lock.tryLock(3, 15, TimeUnit.SECONDS);
-            // 没抢到锁，强行返回
-            if (!res) {
-                return null;
-            }
-            // 抢到锁了，执行后续业务逻辑
+        //// 定义锁
+        //RLock lock = redissonClient.getLock(AI_ANSWER_LOCK + cacheKey);
+        //try {
+        //    // 竞争锁
+        //    boolean res = lock.tryLock(3, 15, TimeUnit.SECONDS);
+        //    // 没抢到锁，强行返回
+        //    if (!res) {
+        //        return null;
+        //    }
+        //    // 抢到锁了，执行后续业务逻辑
             // 1. 根据 id 查询到题目
             Question question = questionService.getOne(
                     Wrappers.lambdaQuery(Question.class).eq(Question::getAppId, appId)
@@ -128,13 +128,13 @@ public class AiTestScoringStrategy implements ScoringStrategy {
             userAnswer.setScoringStrategy(app.getScoringStrategy());
             userAnswer.setChoices(jsonStr);
             return userAnswer;
-        } finally {
-            if (lock != null && lock.isLocked()) {
-                if (lock.isHeldByCurrentThread()) {
-                    lock.unlock();
-                }
-            }
-        }
+        //} finally {
+        //    if (lock != null && lock.isLocked()) {
+        //        if (lock.isHeldByCurrentThread()) {
+        //            lock.unlock();
+        //        }
+        //    }
+        //}
 
     }
 
