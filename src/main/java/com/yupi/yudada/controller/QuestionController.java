@@ -39,9 +39,6 @@ import java.util.stream.Stream;
 
 /**
  * 题目接口
- *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://www.code-nav.cn">编程导航学习圈</a>
  */
 @RestController
 @RequestMapping("/question")
@@ -278,11 +275,14 @@ public class QuestionController {
             "1. 要求：题目和选项尽可能地短，题目不要包含序号，每题的选项数以我提供的为主，题目不能重复\n" +
             "2. 严格按照下面的 json 格式输出题目和选项\n" +
             "```\n" +
-            "[{\"options\":[{\"value\":\"选项内容\",\"key\":\"A\"},{\"value\":\"\",\"key\":\"B\"}],\"title\":\"题目标题\"}]\n" +
+            "[{\"options\":[{\"value\":\"选项内容\",\"key\":\"A\",{\"value\":\"选项内容\",\"key\":\"B\"],\"tit1e\":\"题目标题\"}]\n" +
             "```\n" +
             "title 是题目，options 是选项，每个选项的 key 按照英文字母序（比如 A、B、C、D）以此类推，value 是选项内容\n" +
             "3. 检查题目是否包含序号，若包含序号则去除序号\n" +
             "4. 返回的题目列表格式必须为 JSON 数组";
+
+
+    private static final String GENERATE_QUESTION_SYSTEM_MESSAGE1 = "你是一位严谨的出题专家，我会给你如下信息： ``` 应用名称， 【【【应用描述】】】， 应用类别， 要生成的题目数， 每个题目的选项数 ``` 请你根据上述信息，按照以下步骤来出题： 1.要求：题目和选项尽可能地短，题目不要包含序号，每题的选项数以我提供的为主，题目不能重复  2.严格按照下面的json格式输出题目和选项 ``` [{\"options\":[{\"value\":\"选项内容\"，\"key\":\"A\",{\"value\":\"选项内容\",\"key\":\"B\"],\"tit1e\":\"题目标题\"}]  ``` title 是题目，options 是选项，每个选项的 key 按照英文字母序（比如 A、B、C、D）以此类推，value 是选项内容 3.检查题目是否包含序号，若包含序号则去除序号  4.返回的题目列表格式必须为JS0N数组";
 
     /**
      * 生成题目的用户消息
@@ -295,7 +295,8 @@ public class QuestionController {
     private String getGenerateQuestionUserMessage(App app, int questionNumber, int optionNumber) {
         StringBuilder userMessage = new StringBuilder();
         userMessage.append(app.getAppName()).append("\n");
-        userMessage.append(app.getAppDesc()).append("\n");
+        userMessage.append("【【【");
+        userMessage.append(app.getAppDesc()).append("】】】").append("\n");
         userMessage.append(AppTypeEnum.getEnumByValue(app.getAppType()).getText() + "类").append("\n");
         userMessage.append(questionNumber).append("\n");
         userMessage.append(optionNumber);
